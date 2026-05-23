@@ -1,0 +1,792 @@
+import { useState } from "react";
+
+const profiles = [
+  ["月光タイプ", "感受性が豊かで、人に寄り添えるタイプ",
+   "優しくて、感受性が豊かなタイプ",
+   "周りの人の気持ちに寄り添える心を持ち、繊細で思いやりのあるあなた。気づかないうちに誰かを支えていることも。",
+   "一途な愛情を持つタイプ",
+   "安心できる関係をとても大切にします。深く愛するほど、相手を一途に想い続ける誠実さがあります。",
+   "聞き上手な温かさ",
+   "そばにいるだけで人を安心させる雰囲気があります。あなたの静かな優しさが、誰かの支えになっています。"],
+  ["星灯りタイプ", "静かに努力を重ねるタイプ",
+   "丁寧に積み重ねる、誠実なタイプ",
+   "派手に目立つより、着実に信頼を築いていく人です。その静かな努力が、やがて大きな輝きになります。",
+   "ゆっくり距離を縮める恋愛",
+   "焦らず、相手のペースに合わせて距離を縮めていく恋が向いています。深く知り合うほど好きになるタイプ。",
+   "落ち着いた誠実さ",
+   "どんな場面でも誠実でいられるあなたの姿勢が、周りからの信頼を集めています。"],
+  ["花霞タイプ", "やわらかく人を惹きつけるタイプ",
+   "自然と周囲を和ませる、愛されタイプ",
+   "人当たりがよく、その場の空気をふわっと和ませる力があります。無意識に人を惹きつけるあなた。",
+   "愛され上手な恋愛スタイル",
+   "自然体でいるだけで愛されるタイプ。ただ、頑張りすぎず自分のペースを大切にすることも忘れずに。",
+   "親しみやすい雰囲気",
+   "誰とでも自然に打ち解けられる、ふんわりとした親しみやすさがあなたの最大の魅力です。"],
+  ["朝露タイプ", "素直でまっすぐな感性を持つタイプ",
+   "飾らない自然体が魅力のタイプ",
+   "嘘をつくことが苦手で、自分の感覚をとても大切にしています。そのまっすぐさが周りを惹きつけます。",
+   "誠実な愛情表現を好む",
+   "飾らない言葉や行動で愛情を示してくれる相手に安心します。素直に気持ちを伝え合える関係が理想。",
+   "ありのままの自然体",
+   "無理に着飾らず、ありのままでいられるあなたの姿が、誰よりも輝いて見えることがあります。"],
+  ["白百合タイプ", "上品で芯のあるタイプ",
+   "やさしさの中に、凛とした芯を持つタイプ",
+   "柔らかな印象の中に、しっかりとした自分の軸があります。その品のある強さが周りから頼られる理由です。",
+   "信頼と尊重を大切にする恋愛",
+   "お互いを尊重し合える、誠実な関係を求めます。信頼を積み重ねた深い愛情を大切にするタイプです。",
+   "凛とした上品な雰囲気",
+   "丁寧な言葉遣いや立ち居振る舞いが、あなたの品格をさりげなく際立たせています。"],
+  ["小鳥タイプ", "明るく縁を広げるタイプ",
+   "好奇心旺盛で、縁を運ぶタイプ",
+   "好奇心が豊かで、人との会話から新しい出会いや運が広がります。その明るさが周りに活力を与えます。",
+   "楽しい会話から始まる恋愛",
+   "一緒にいて楽しく、自然に会話が弾む相手と相性が良いです。笑顔の多い、軽やかな恋が向いています。",
+   "話しやすさと親しみやすさ",
+   "誰に対しても分け隔てなく接するあなたの明るさが、自然と人を引き寄せます。"],
+  ["水鏡タイプ", "直感が鋭く、深く感じ取るタイプ",
+   "鋭い直感で、本質を見抜くタイプ",
+   "空気や人の感情の変化に敏感で、言葉にならない部分まで感じ取ることができます。",
+   "心のつながりを重視する恋愛",
+   "表面的な関係より、魂レベルで通じ合えるような深いつながりを求めます。",
+   "ミステリアスな深み",
+   "多くを語らなくても伝わる、あなたの静かな存在感がミステリアスな魅力を放っています。"],
+  ["陽だまりタイプ", "人を安心させるあたたかいタイプ",
+   "そばにいるだけで、ほっとさせるタイプ",
+   "一緒にいる人の心をほぐす、太陽のような温かさがあります。あなたの笑顔が周りの日常を明るくします。",
+   "穏やかで優しい恋愛",
+   "焦らず、お互いのペースで育てていく穏やかな恋愛が向いています。安心感のある関係が長続きします。",
+   "包み込む優しさ",
+   "相手の不安や疲れをそっと包んであげられる、包容力のある優しさがあなたの一番の魅力です。"],
+  ["金木犀タイプ", "さりげなく印象に残るタイプ",
+   "主張しなくても、記憶に残り続けるタイプ",
+   "強く自己主張しなくても、気づいたらその場で一番印象に残っている人。それがあなたの特別な魅力です。",
+   "ゆっくり惹かれ合う恋愛",
+   "最初は友人として始まり、気づけば好きになっていた――そんなゆっくりと深まる恋が向いています。",
+   "忘れられない存在感",
+   "控えめなのに、なぜかずっと頭に残る。あなたにはそんな不思議な余韻があります。"],
+  ["真珠タイプ", "内側に美しい強さを持つタイプ",
+   "傷を美しさに変える、内なる強さを持つタイプ",
+   "辛い経験を経て、より深い優しさと強さを手に入れてきた人です。その歴史があなたを輝かせています。",
+   "深く大切にされる恋愛",
+   "表面的な関係より、時間をかけて深く愛し合える恋愛で本当の輝きを放ちます。",
+   "静かな強さと品のある優しさ",
+   "多くを語らずとも伝わる、あなたの静かな強さと品格が、周りに深い安心感を与えています。"],
+  ["薄桜タイプ", "繊細で愛情深いタイプ",
+   "小さな変化に気づける、繊細なタイプ",
+   "他の人が見逃してしまうような些細な変化にも気づき、そっと寄り添える繊細さがあります。",
+   "深く尽くす一途な恋愛",
+   "好きになると深く愛するタイプ。相手のために尽くすことに喜びを感じる、愛情深い人です。",
+   "言葉に宿る癒しの力",
+   "あなたのやさしい言葉には、人の心をほっと和らげる特別な力が宿っています。"],
+  ["鈴蘭タイプ", "控えめでも芯が通ったタイプ",
+   "そっと支える、静かな芯を持つタイプ",
+   "前に出るより、後ろからそっと支えることを得意とします。その存在感は静かでも、確かな力があります。",
+   "誠実で落ち着いた恋愛",
+   "誠実で落ち着いた相手との関係が向いています。派手さより、安定した温かい日常を共に育てたいタイプ。",
+   "清楚で落ち着いた雰囲気",
+   "どんな場面でも自然体でいられるあなたの清楚な雰囲気が、周りを穏やかにします。"],
+  ["流星タイプ", "変化の中で輝くタイプ",
+   "変化を力に変える、流れ星のようなタイプ",
+   "新しい環境や変化の中でこそ才能が開花します。変化を恐れず飛び込める、勇気ある人です。",
+   "刺激と安心のバランスを求める恋愛",
+   "新鮮なドキドキと、帰れる安心感を両方求めています。変化を楽しみながら深められる恋が理想です。",
+   "周りに新しい風を運ぶ魅力",
+   "あなたが来るだけで空気が変わる。そんな風のような存在感で、周りに活力を与えています。"],
+  ["淡雪タイプ", "やさしく透明感のあるタイプ",
+   "相手に圧を与えない、透明感あふれるタイプ",
+   "柔らかく、でも確かにそこにいる。あなたの透明感のある存在が、周りの人の心を落ち着かせます。",
+   "安心して甘えられる恋愛",
+   "お互いに素直に甘えられる、ありのままでいられる関係が向いています。",
+   "透明感のある雰囲気",
+   "濁りのない、まっさらな透明感があなたの魅力。その清潔感が多くの人を惹きつけます。"],
+  ["紫苑タイプ", "大人っぽく思慮深いタイプ",
+   "深く考え、落ち着いた判断ができるタイプ",
+   "物事を表面だけでなく、深いところまで考えられます。その思慮深さが、周りからの信頼につながります。",
+   "知性に惹かれる恋愛",
+   "精神的に尊敬できる、知的な会話ができる相手に深く惹かれます。心が通じ合える関係を求めています。",
+   "知的で落ち着いた雰囲気",
+   "落ち着いた言動と知的な雰囲気が、あなたを大人の魅力にあふれた存在にしています。"],
+  ["桃霞タイプ", "愛嬌とやさしさを持つタイプ",
+   "自然に距離を縮める、愛嬌あふれるタイプ",
+   "気づけばそばにいて、気づけば仲良くなっている。あなたにはそんな不思議な距離の縮め方があります。",
+   "愛情表現を大切にする恋愛",
+   "言葉やスキンシップで愛情を伝え合える相手と相性が良いです。お互いの気持ちを確認し合える関係が理想。",
+   "親しみやすさと可愛らしさ",
+   "自然と笑顔になれる、そんな雰囲気を持つあなたのそばにいると、なぜか元気になれます。"],
+  ["青月タイプ", "冷静さと優しさを併せ持つタイプ",
+   "感情に流されず、静かに優しいタイプ",
+   "冷静に物事を見ながらも、その奥には深い優しさがあります。クールに見えて、実は誰より思いやりがある人。",
+   "程よい距離感を大切にする恋愛",
+   "お互いの空間を尊重しながら、でも確かなつながりを感じられる関係が向いています。",
+   "クールな外見と優しいギャップ",
+   "普段は静かなのに、大切な場面でふっと見せる優しさ。そのギャップがあなたの最大の魅力です。"],
+  ["花灯りタイプ", "周囲をそっと明るくするタイプ",
+   "そっと周りを照らす、灯りのようなタイプ",
+   "大きな声で主張するわけではないけれど、あなたがいると場が明るくなる。そんな内なる温かさがあります。",
+   "支え合える恋愛",
+   "お互いに支え合い、成長できる関係を求めています。一緒にいることで、より良い自分になれる恋が理想。",
+   "やさしい言葉と気配り",
+   "さりげない気配りや言葉のかけ方に、あなたのやさしさが滲み出ています。"],
+  ["琥珀タイプ", "経験を魅力に変えるタイプ",
+   "経験を重ね、深みを増していくタイプ",
+   "辛いことも嬉しいことも、すべてをあなたの糧にしてきた人です。その歩みがあなたに深みと温かさをもたらしています。",
+   "安心感と誠実さを求める恋愛",
+   "表面的な盛り上がりより、安定した誠実さを大切にします。時間をかけて育てる愛情を信じるタイプ。",
+   "包容力と大人っぽい雰囲気",
+   "どんな相手もそのまま受け入れられる包容力と、経験から生まれた大人の余裕があなたを輝かせます。"],
+  ["白星タイプ", "理想に向かって進めるタイプ",
+   "理想を持ち、未来を描き続けるタイプ",
+   "心の中に明確な理想があり、それに向かって着実に歩んでいける人です。その前向きさが周りを鼓舞します。",
+   "高め合える関係を求める恋愛",
+   "お互いの夢や目標を応援し合い、一緒に成長できる関係を理想としています。",
+   "前向きな空気と未来を信じる力",
+   "どんな時も未来を信じ続けるあなたのポジティブさが、周りの人たちの道標になっています。"],
+];
+
+const MF = '"Zen Old Mincho","Shippori Mincho","Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif';
+
+export default function App() {
+  const [step, setStep]     = useState("input");
+  const [birth, setBirth]   = useState({ year:"", month:"", day:"" });
+  const [profile, setProfile] = useState(null);
+
+  const years  = Array.from({ length:80 }, (_,i) => 1950+i);
+  const months = Array.from({ length:12 }, (_,i) => i+1);
+  const days   = Array.from({ length:31 }, (_,i) => i+1);
+
+  const diagnose = () => {
+    const y = Number(birth.year)||2000, m = Number(birth.month)||1, d = Number(birth.day)||1;
+    setProfile(profiles[(y + m*3 + d*7) % profiles.length]);
+    setStep("result");
+    window.scrollTo(0,0);
+  };
+
+  const [opened, setOpened] = useState(false);
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500&family=Shippori+Mincho:wght@400;500&family=Noto+Serif+JP:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+        html, body {
+          font-family: ${MF};
+          /* 背景画像：image/background.png を全画面固定で使用 */
+          background-image: url('/image/background.png');
+          background-size: cover;
+          background-position: center top;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-color: #cac1e0; /* 画像未ロード時のフォールバック */
+          min-height: 100vh;
+        }
+
+        /* ── ページ全体のセンタリング ── */
+        .page {
+          width: 100%;
+          max-width: 430px;
+          margin: 0 auto;
+          padding: 0 0 48px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        /* ── アーチカード共通 ── */
+        .arch-card {
+          width: calc(100% - 48px);
+          background: rgba(253, 251, 255, 0.97);
+          border: 0.8px solid rgba(200, 168, 74, 0.35);
+          border-radius: 140px 140px 28px 28px;
+          padding: 44px 28px 36px;
+          margin-top: 48px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        /* ── 小エンブレム ── */
+        .emblem {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        .emblem-line {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 2px;
+        }
+        .emblem-line::before, .emblem-line::after {
+          content: '';
+          display: block;
+          width: 28px;
+          height: 0.5px;
+          background: rgba(200, 168, 74, 0.45);
+        }
+        .emblem-dot {
+          width: 5px; height: 5px;
+          background: rgba(200, 168, 74, 0.55);
+          transform: rotate(45deg);
+        }
+
+        /* ── 入力画面テキスト ── */
+        .eyebrow {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 10px;
+          letter-spacing: 0.38em;
+          color: #9888c0;
+          font-style: italic;
+          margin-bottom: 16px;
+        }
+        .input-title-sub {
+          font-size: 12px;
+          letter-spacing: 0.12em;
+          color: #7a6aaa;
+          margin-bottom: 4px;
+          text-align: center;
+        }
+        .input-title-main {
+          font-size: 25px;
+          font-weight: 400;
+          letter-spacing: 0.03em;
+          color: #2c2258;
+          line-height: 1.5;
+          text-align: center;
+          margin-bottom: 10px;
+          word-break: keep-all;
+        }
+        .input-desc {
+          font-size: 12px;
+          letter-spacing: 0.05em;
+          color: #8070b0;
+          line-height: 1.95;
+          text-align: center;
+          margin-bottom: 28px;
+        }
+
+        /* ── 区切り ── */
+        .divider {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 22px;
+        }
+        .divider::before, .divider::after {
+          content: '';
+          flex: 1;
+          height: 0.4px;
+          background: linear-gradient(90deg, transparent, rgba(200,168,74,0.38));
+        }
+        .divider::after {
+          background: linear-gradient(90deg, rgba(200,168,74,0.38), transparent);
+        }
+        .divider-gem {
+          width: 5px; height: 5px;
+          background: rgba(200, 168, 74, 0.48);
+          transform: rotate(45deg);
+          flex-shrink: 0;
+        }
+
+        /* ── 入力パネル ── */
+        .input-panel {
+          width: 100%;
+          background: rgba(252, 250, 255, 0.80);
+          border: 0.8px solid rgba(200, 168, 74, 0.25);
+          border-radius: 16px;
+          padding: 18px 14px 16px;
+          margin-bottom: 18px;
+        }
+        .panel-label {
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          color: #9888b8;
+          text-align: center;
+          margin-bottom: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+        }
+        .panel-label::before, .panel-label::after { content: '·'; color: #c8a84a; font-size: 13px; }
+
+        .sel-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 8px;
+        }
+        .sel-col {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+        }
+        .sel-lbl { font-size: 10px; letter-spacing: 0.14em; color: #9888b8; }
+        .sel-w { position: relative; width: 100%; }
+        .sel-w::after {
+          content: '›';
+          position: absolute; right: 8px; top: 50%;
+          transform: translateY(-50%) rotate(90deg);
+          font-size: 10px; color: #c8a84a;
+          pointer-events: none; line-height: 1;
+        }
+        .lx-sel {
+          width: 100%; height: 40px;
+          border-radius: 10px;
+          border: 0.8px solid rgba(200, 168, 74, 0.4);
+          background: rgba(255, 255, 255, 0.94);
+          color: #2c2258;
+          font-size: 13px;
+          font-family: ${MF};
+          text-align: center;
+          text-align-last: center;
+          -webkit-appearance: none;
+          appearance: none;
+          padding: 0 4px;
+          cursor: pointer;
+        }
+        .lx-sel:focus { outline: none; border-color: #c8a84a; }
+
+        /* ── ゴールドボタン ── */
+        .gold-btn {
+          width: 100%;
+          height: 50px;
+          border-radius: 100px;
+          border: 1px solid rgba(190, 158, 80, 0.5);
+          background: linear-gradient(135deg,
+            rgba(162,128,52,0.9) 0%,
+            rgba(206,168,82,0.94) 35%,
+            rgba(224,192,104,0.96) 52%,
+            rgba(190,148,60,0.92) 72%,
+            rgba(162,128,52,0.9) 100%);
+          color: rgba(255, 252, 242, 0.96);
+          font-family: ${MF};
+          font-size: 13.5px;
+          letter-spacing: 0.13em;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          box-shadow: 0 3px 14px rgba(150,110,30,0.18), inset 0 1px 0 rgba(255,248,220,0.28);
+          transition: transform 0.13s, opacity 0.13s;
+        }
+        .gold-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* ── 結果：ヘッダー ── */
+        .result-header {
+          width: 100%;
+          text-align: center;
+          padding-bottom: 6px;
+          margin-bottom: 4px;
+        }
+        .r-eyebrow {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 10px;
+          letter-spacing: 0.34em;
+          color: #9888c0;
+          font-style: italic;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          margin-bottom: 12px;
+        }
+        .r-eyebrow::before, .r-eyebrow::after {
+          content: '';
+          display: block;
+          width: 20px;
+          height: 0.4px;
+          background: rgba(200,168,74,0.45);
+        }
+        .r-anata { font-size: 11px; letter-spacing: 0.2em; color: #7a6aaa; margin-bottom: 4px; }
+        .r-type {
+          font-size: 27px;
+          font-weight: 400;
+          letter-spacing: 0.04em;
+          color: #2c2258;
+          line-height: 1.3;
+          margin-bottom: 8px;
+        }
+        .r-bracket {
+          font-family: 'Cormorant Garamond', serif;
+          color: #c8a84a;
+          font-size: 31px;
+          font-style: italic;
+        }
+        .r-tagline {
+          font-size: 11.5px;
+          letter-spacing: 0.06em;
+          color: #8070b0;
+          line-height: 1.8;
+        }
+
+        /* ── 結果カード ── */
+        .r-cards {
+          width: 100%;
+          margin-top: 20px;
+        }
+        .r-card {
+          background: rgba(253, 251, 255, 0.88);
+          border: 0.8px solid rgba(200, 168, 74, 0.22);
+          border-radius: 20px;
+          padding: 18px 20px 20px;
+          margin-bottom: 10px;
+        }
+        .r-card-hd {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          margin-bottom: 10px;
+        }
+        .r-hd-line {
+          flex: 1; height: 0.4px;
+          background: linear-gradient(90deg, transparent, rgba(200,168,74,0.4));
+        }
+        .r-hd-line.r { background: linear-gradient(90deg, rgba(200,168,74,0.4), transparent); }
+        .r-hd-txt { font-size: 10px; letter-spacing: 0.22em; color: #9888b8; white-space: nowrap; }
+        .r-card-title {
+          font-size: 15px;
+          font-weight: 500;
+          color: #2c2258;
+          letter-spacing: 0.04em;
+          line-height: 1.55;
+          margin-bottom: 8px;
+        }
+        .r-card-body {
+          font-size: 12.5px;
+          line-height: 1.95;
+          color: #5a4d7a;
+          letter-spacing: 0.04em;
+        }
+
+        /* ── 有料導線：恋愛テキストカード ── */
+        .paid-section {
+          width: 100%;
+          margin-top: 8px;
+        }
+        .paid-label-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 20px 0 16px;
+        }
+        .paid-label-row::before, .paid-label-row::after {
+          content: '';
+          flex: 1;
+          height: 0.4px;
+          background: linear-gradient(90deg, transparent, rgba(200,168,74,0.35));
+        }
+        .paid-label-row::after { background: linear-gradient(90deg, rgba(200,168,74,0.35), transparent); }
+        .paid-label-txt { font-size: 10px; letter-spacing: 0.16em; color: #9888b8; white-space: nowrap; }
+
+        /* テキストカード */
+        .teaser-card {
+          width: 100%;
+          background: rgba(252, 250, 255, 0.9);
+          border: 0.8px solid rgba(200, 168, 74, 0.28);
+          border-radius: 20px;
+          padding: 20px 22px 22px;
+          margin-bottom: 14px;
+          position: relative;
+          overflow: hidden;
+        }
+        .teaser-card-hd {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          margin-bottom: 12px;
+        }
+        .teaser-hd-line {
+          flex: 1; height: 0.4px;
+          background: linear-gradient(90deg, transparent, rgba(200,168,74,0.4));
+        }
+        .teaser-hd-line.r { background: linear-gradient(90deg, rgba(200,168,74,0.4), transparent); }
+        .teaser-hd-txt { font-size: 10px; letter-spacing: 0.22em; color: #9888b8; white-space: nowrap; }
+        .teaser-title {
+          font-size: 15px;
+          font-weight: 500;
+          color: #2c2258;
+          letter-spacing: 0.04em;
+          line-height: 1.55;
+          margin-bottom: 12px;
+        }
+        /* 見える部分＋フェードアウト */
+        .teaser-body-wrap {
+          position: relative;
+          height: 80px;
+          overflow: hidden;
+        }
+        .teaser-body {
+          font-size: 12.5px;
+          line-height: 2;
+          color: #5a4d7a;
+          letter-spacing: 0.04em;
+        }
+        /* 下からフェードするグラデーション */
+        .teaser-fade {
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          height: 56px;
+          background: linear-gradient(
+            to bottom,
+            rgba(252,250,255,0) 0%,
+            rgba(252,250,255,0.7) 40%,
+            rgba(252,250,255,0.97) 100%
+          );
+        }
+        /* 「続きを読む」ボタン */
+        .teaser-read-btn {
+          width: 100%;
+          height: 40px;
+          border-radius: 100px;
+          border: 0.8px solid rgba(200, 168, 74, 0.42);
+          background: rgba(255, 253, 248, 0.95);
+          color: #8a7040;
+          font-family: ${MF};
+          font-size: 12px;
+          letter-spacing: 0.14em;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-top: 10px;
+          transition: background 0.13s;
+        }
+        .teaser-read-btn:active { background: rgba(238, 224, 192, 0.95); }
+
+        /* ── CTA エリア ── */
+        .cta-area {
+          width: 100%;
+          padding-top: 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        }
+        .retry-btn {
+          font-size: 11px;
+          letter-spacing: 0.18em;
+          color: #9888b8;
+          background: none;
+          border: none;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+          cursor: pointer;
+          font-family: ${MF};
+        }
+        .login-btn {
+          font-size: 11px;
+          letter-spacing: 0.16em;
+          color: #9888b8;
+          background: none;
+          border: none;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+          cursor: pointer;
+          font-family: ${MF};
+          padding-bottom: 8px;
+        }
+      `}</style>
+
+      {/* ════════════ 入力画面 ════════════ */}
+      {step === "input" && (
+        <div className="page">
+          <div className="arch-card">
+            <div className="emblem">
+              <div className="emblem-line">
+                <div className="emblem-dot" />
+              </div>
+            </div>
+            <div className="eyebrow">Birth Fortune</div>
+            <div className="input-title-sub">生年月日からわかる</div>
+            <div className="input-title-main">あなたの本来の性質</div>
+            <div className="input-desc">
+              恋愛・仕事・人生の流れを<br />やさしくお伝えします
+            </div>
+            <div className="divider"><div className="divider-gem" /></div>
+            <div className="input-panel">
+              <div className="panel-label">生年月日を入力してください</div>
+              <div className="sel-row">
+                {[
+                  { lbl:"年", val:birth.year,  items:years,  key:"year"  },
+                  { lbl:"月", val:birth.month, items:months, key:"month" },
+                  { lbl:"日", val:birth.day,   items:days,   key:"day"   },
+                ].map(({ lbl, val, items, key }) => (
+                  <div className="sel-col" key={key}>
+                    <div className="sel-lbl">{lbl}</div>
+                    <div className="sel-w">
+                      <select
+                        className="lx-sel"
+                        value={val}
+                        onChange={e => setBirth({ ...birth, [key]: e.target.value })}
+                        style={{ textAlign:"center", textAlignLast:"center" }}
+                      >
+                        <option value="">{lbl === "年" ? "----" : "--"}</option>
+                        {items.map(v => <option key={v} value={v}>{v}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button className="gold-btn" onClick={diagnose}>
+              鑑定をはじめる <span style={{ fontSize:14, opacity:0.8 }}>→</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ════════════ 結果画面 ════════════ */}
+      {step === "result" && profile && (
+        <div className="page">
+          <div className="arch-card">
+
+            {/* ヘッダー */}
+            <div className="result-header">
+              <div className="r-eyebrow">鑑定結果</div>
+              <div className="r-anata">あなたは</div>
+              <div className="r-type">
+                <span className="r-bracket">「</span>
+                {profile[0]}
+                <span className="r-bracket">」</span>
+              </div>
+              <div className="r-tagline">{profile[1]}</div>
+            </div>
+
+            {/* 無料カード3枚 */}
+            <div className="r-cards">
+              {[
+                { lbl:"あなたの基本性格", title:profile[2], body:profile[3] },
+                { lbl:"恋愛傾向",        title:profile[4], body:profile[5] },
+                { lbl:"隠れた魅力",      title:profile[6], body:profile[7] },
+              ].map((s, i) => (
+                <div className="r-card" key={i}>
+                  <div className="r-card-hd">
+                    <div className="r-hd-line" />
+                    <span className="r-hd-txt">{s.lbl}</span>
+                    <div className="r-hd-line r" />
+                  </div>
+                  <div className="r-card-title">{s.title}</div>
+                  <div className="r-card-body">{s.body}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* 有料導線：恋愛テキストカード */}
+            <div className="paid-section">
+
+              {/* 区切りラベル：未開封時のみ */}
+              {!opened && (
+                <div className="paid-label-row">
+                  <span className="paid-label-txt">ここからは有料鑑定でお伝えします</span>
+                </div>
+              )}
+
+              {/* 開封後ラベル */}
+              {opened && (
+                <div className="paid-label-row">
+                  <span className="paid-label-txt">有料鑑定結果</span>
+                </div>
+              )}
+
+              <div className="teaser-card">
+                <div className="teaser-card-hd">
+                  <div className="teaser-hd-line" />
+                  <span className="teaser-hd-txt">あなたの恋愛の未来</span>
+                  <div className="teaser-hd-line r" />
+                </div>
+                <div className="teaser-title">あなたが本当に求めている愛のかたち</div>
+
+                {/* 冒頭テキスト：常に表示 */}
+                <div className="teaser-body" style={{ marginBottom: 10 }}>
+                  あなたは近いうちに、大きな恋愛の転機を迎える可能性があります——。
+                  これまで心のどこかで諦めていた感情が、静かにほどけていく時期。
+                </div>
+
+                {/* 未開封：続きをフェードで隠す */}
+                {!opened && (
+                  <div className="teaser-body-wrap">
+                    <div className="teaser-body" style={{ color:"transparent", userSelect:"none" }}>
+                      出会いの予感だけでなく、今ある関係が深まる兆しも見えています。
+                      あなたの恋愛には、まだ気づいていない大切なパターンが存在しています。
+                    </div>
+                    <div className="teaser-fade" />
+                  </div>
+                )}
+
+                {/* 開封後：全文＋追加コンテンツ */}
+                {opened && (
+                  <div>
+                    <div className="teaser-body" style={{ marginBottom: 14 }}>
+                      出会いの予感だけでなく、今ある関係が深まる兆しも見えています。
+                      あなたの恋愛には、まだ気づいていない大切なパターンが存在しています。
+                    </div>
+                    <div style={{
+                      background:"rgba(248,246,255,0.9)",
+                      border:"0.8px solid rgba(200,168,74,0.2)",
+                      borderRadius:14, padding:"16px 18px", marginBottom:10,
+                    }}>
+                      <div style={{
+                        fontSize:10, letterSpacing:"0.22em", color:"#9888b8",
+                        marginBottom:10, textAlign:"center",
+                        display:"flex", alignItems:"center", gap:6,
+                      }}>
+                        <span style={{flex:1, height:"0.4px", background:"linear-gradient(90deg,transparent,rgba(200,168,74,0.35))", display:"block"}}/>
+                        恋愛のターニングポイント
+                        <span style={{flex:1, height:"0.4px", background:"linear-gradient(90deg,rgba(200,168,74,0.35),transparent)", display:"block"}}/>
+                      </div>
+                      <div style={{ fontSize:"12.5px", lineHeight:1.95, color:"#5a4d7a", letterSpacing:"0.04em" }}>
+                        あなたが本当に惹かれるのは、表面的な華やかさより、静かな誠実さを持つ人。
+                        心が通じ合った瞬間、あなたの中で何かが変わります。
+                        その出会いは、日常のふとした場面に隠れています。
+                      </div>
+                    </div>
+                    <div style={{
+                      background:"rgba(248,246,255,0.9)",
+                      border:"0.8px solid rgba(200,168,74,0.2)",
+                      borderRadius:14, padding:"16px 18px",
+                    }}>
+                      <div style={{
+                        fontSize:10, letterSpacing:"0.22em", color:"#9888b8",
+                        marginBottom:10, textAlign:"center",
+                        display:"flex", alignItems:"center", gap:6,
+                      }}>
+                        <span style={{flex:1, height:"0.4px", background:"linear-gradient(90deg,transparent,rgba(200,168,74,0.35))", display:"block"}}/>
+                        大切にしてほしいこと
+                        <span style={{flex:1, height:"0.4px", background:"linear-gradient(90deg,rgba(200,168,74,0.35),transparent)", display:"block"}}/>
+                      </div>
+                      <div style={{ fontSize:"12.5px", lineHeight:1.95, color:"#5a4d7a", letterSpacing:"0.04em" }}>
+                        自分の感情を後回しにしすぎないこと。
+                        あなたが与えてきた分の愛を、今度は受け取る準備をしていいのです。
+                        心を開いたとき、相手はきっとそこにいます。
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="cta-area">
+              {/* ゴールドボタン：未開封時のみ */}
+              {!opened && (
+                <button className="gold-btn" onClick={() => setOpened(true)}>
+                  有料鑑定で全ての結果を見る
+                  <span style={{ fontSize:14, opacity:0.8 }}>→</span>
+                </button>
+              )}
+              <button className="retry-btn" onClick={() => { setStep("input"); setOpened(false); }}>
+                もう一度診断する
+              </button>
+              <button className="login-btn">ログインはこちら</button>
+            </div>
+
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
